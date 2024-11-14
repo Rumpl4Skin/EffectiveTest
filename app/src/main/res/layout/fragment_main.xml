@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical"
     android:padding="8dp"
-    tools:context=".MainFragment">
+    tools:context=".presentation.screens.mainScreen.MainFragment">
 
     <!--поле поиска -->
     <LinearLayout
@@ -48,17 +49,160 @@
             android:layout_weight="5"
             android:paddingStart="8.dp">
 
-            <ImageView
-                android:layout_width="56.dp"
-                android:layout_height="56.dp"
+            <ImageButton
+                android:id="@+id/filterButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/filter_background"
-                android:contentDescription=""
-                android:padding="16.dp"
+                android:contentDescription="Filter"
                 android:src="@drawable/ic_filter" />
         </FrameLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/filterPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8.dp"
+        android:layout_marginBottom="8.dp"
+        android:background="@drawable/search_background"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="visible">
+
+        <!-- TODO элементы фильтра -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="4.dp"
+            android:background="@drawable/kategory_background"
+            android:orientation="vertical"
+            android:padding="8.dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Категория"
+                android:textColor="@color/green"
+                android:textSize="16sp" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RadioButton
+                    android:id="@+id/radioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kotlin"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/radioButton2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Android SDK"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/radioButton3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="UI/UX"
+                    android:textColor="@color/white" />
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="4.dp"
+            android:background="@drawable/kategory_background"
+            android:orientation="vertical"
+            android:padding="8.dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Сложность"
+                android:textColor="@color/green"
+                android:textSize="16sp" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RadioButton
+                    android:id="@+id/radioButton4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Beginner"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/radioButton5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Advanced"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/radioButton6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="UI/UX"
+                    android:textColor="@color/white" />
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/kategory_background"
+            android:orientation="vertical"
+            android:padding="8.dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Цена"
+                android:textColor="@color/green"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/switch1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="бесплатный"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="платный"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <!-- TODO: Update blank fragment layout -->
+    <include layout="@layout/course_item" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

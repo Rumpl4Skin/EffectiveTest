@@ -6,4 +6,5 @@
     <string name="favorite">Favorite</string>
     <string name="account">Account</string>
     <string name="search_title">Search courses</string>
+    <string name="detail_course">to detail →</string>
 </resources>
