@@ -5,4 +5,5 @@
     <string name="home">Home</string>
     <string name="favorite">Favorite</string>
     <string name="account">Account</string>
+    <string name="search_title">Search courses</string>
 </resources>
