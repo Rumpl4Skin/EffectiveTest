@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="4.dp"
-            android:background="@drawable/kategory_background"
+            android:background="@drawable/category_background"
             android:orientation="vertical"
             android:padding="8.dp">
 
@@ -90,7 +90,8 @@
 
             <RadioGroup
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <RadioButton
                     android:id="@+id/radioButton"
@@ -120,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="4.dp"
-            android:background="@drawable/kategory_background"
+            android:background="@drawable/category_background"
             android:orientation="vertical"
             android:padding="8.dp">
 
@@ -147,14 +148,14 @@
                     android:id="@+id/radioButton5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Advanced"
+                    android:text="Intermediate"
                     android:textColor="@color/white" />
 
                 <RadioButton
                     android:id="@+id/radioButton6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="UI/UX"
+                    android:text="Advanced"
                     android:textColor="@color/white" />
             </RadioGroup>
 
@@ -163,7 +164,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/kategory_background"
+            android:background="@drawable/category_background"
             android:orientation="vertical"
             android:padding="8.dp">
 
@@ -204,6 +205,7 @@
     <include layout="@layout/course_item" />
 
     <TextView
+        android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="main" />

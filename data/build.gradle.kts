@@ -1,6 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlinx.serialization)
+
+
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -36,6 +41,18 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(project(":domain"))
+
+    // Network
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.ser)
+    implementation(libs.kotlinx.serialization.json)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+
+    //DI
+    implementation("com.google.dagger:hilt-android:2.52")
+    kapt ("com.google.dagger:hilt-compiler:2.52")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

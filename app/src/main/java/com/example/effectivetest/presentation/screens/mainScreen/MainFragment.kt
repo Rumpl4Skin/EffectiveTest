@@ -12,9 +12,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.effectivetest.R
 import com.example.effectivetest.databinding.FragmentMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
@@ -36,16 +37,20 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val filterButton = binding.filterButton
+        val text = binding.text
         filterPanel = binding.filterPanel
 
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
-                filterPanel.visibility = if (uiState.filterPanelVisibility) View.VISIBLE else View.GONE
+                text.text = uiState.courses.firstOrNull()?.title ?: "пусто"
+                filterPanel.visibility =
+                    if (uiState.filterPanelVisibility) View.VISIBLE else View.GONE
 
             }
         }
 
         filterButton.setOnClickListener {
+            viewModel.getCoursesList()
             if (viewModel.uiState.value.filterPanelVisibility) {
                 slideUp()
             } else {
