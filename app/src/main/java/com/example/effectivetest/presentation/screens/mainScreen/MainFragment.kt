@@ -10,7 +10,6 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.effectivetest.R
 import com.example.effectivetest.databinding.FragmentMainBinding
-import com.example.effectivetest.presentation.CourseAdapter
-import com.example.effectivetest.presentation.interfaces.CourseItemClickListener
+import com.example.effectivetest.presentation.recycler.course.CourseAdapter
+import com.example.effectivetest.presentation.recycler.course.CourseItemClickListener
 import com.example.effetivetest.domain.model.Course
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.example.effectivetest.presentation
+package com.example.effectivetest.presentation.recycler.course
 
 import com.example.effetivetest.domain.model.Course
 

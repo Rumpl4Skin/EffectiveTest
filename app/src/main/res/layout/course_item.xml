@@ -44,7 +44,7 @@
                 android:padding="8.dp">
 
                 <ToggleButton
-                    android:id="@+id/toFavoriteBtn"
+                    android:id="@+id/goBackBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/is_fav_selector"
@@ -141,6 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:clickable="true"
                 android:gravity="right|center_horizontal"
                 android:text="@string/detail_course"
                 android:textColor="@color/green"

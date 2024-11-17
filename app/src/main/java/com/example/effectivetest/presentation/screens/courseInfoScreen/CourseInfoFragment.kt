@@ -1,28 +1,34 @@
 package com.example.effectivetest.presentation.screens.courseInfoScreen
 
 import SharedViewModel
-import android.graphics.drawable.BitmapDrawable
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.effectivetest.R
 import com.example.effectivetest.databinding.FragmentCourseInfoBinding
-import com.example.effectivetest.databinding.FragmentMainBinding
-import com.example.effetivetest.domain.model.Course
+import kotlinx.coroutines.launch
+
 
 class CourseInfoFragment : Fragment() {
 
     private var _binding: FragmentCourseInfoBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val viewModel: CourseInfoFragmentViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -32,30 +38,55 @@ class CourseInfoFragment : Fragment() {
 
         _binding = FragmentCourseInfoBinding.inflate(inflater, container, false)
 
-        val course = sharedViewModel.selectedCourse.observe(viewLifecycleOwner) { course ->
+        //получение выбранного course из предыдущего экрана
+        sharedViewModel.selectedCourse.observe(viewLifecycleOwner) { course ->
+            viewModel.setCourse(course = course)
             val imageView: ImageView = binding.courseImg
-            Glide.with(this).load(course.cover)
+            Glide.with(this).load(viewModel.uiState.value.course?.cover)
                 .placeholder(R.drawable.search_background).error(R.drawable.ic_search)
                 .into(imageView)
 
-            binding.courseNameTxt.text = course.title
-            binding.courseAuthorTxt.text = course.authors?.first().toString()
-            binding.courseDescriptionTxt.text = course.summary
-            /*binding.isFavBtn.setImageDrawable(
+            binding.courseNameTxt.text =
+                viewModel.uiState.value.course?.title?.ifEmpty { context?.getString(R.string.absent) }
+            binding.courseAuthorTxt.text =
+                viewModel.uiState.value.course?.author?.ifEmpty { context?.getString(R.string.absent) }
+            binding.courseDescriptionTxt.text = Html.fromHtml(
+                viewModel.uiState.value.course?.description,
+                Html.FROM_HTML_MODE_COMPACT
+            )?.ifEmpty { context?.getString(R.string.absent) }
+            binding.isFavBtn.background =
                 context?.let {
                     AppCompatResources.getDrawable(
                         it,
-                        if (course.isFavorite) R.drawable.ic_is_fav_sel else R.drawable.ic_favorite
+                        if (viewModel.uiState.value.course?.isFavorite == true) R.drawable.ic_is_fav_sel else R.drawable.ic_favorite
                     )
                 }
-            )*/
 
             binding.isFavBtn.setOnClickListener {
-
+                viewModel.uiState.value.course?.copy(isFavorite = !viewModel.uiState.value.course?.isFavorite!!)
+                    ?.let { it1 -> viewModel.setCourse(it1) }
             }
 
             binding.goBackBtn.setOnClickListener {
                 findNavController().popBackStack()
+            }
+
+            binding.startCourseBtn.setOnClickListener {
+                if (viewModel.uiState.value.course?.actualLink?.isNotEmpty() == true) {
+                    val webpage: Uri = Uri.parse(viewModel.uiState.value.course?.actualLink)
+                    val intent = Intent(Intent.ACTION_VIEW, webpage)
+                    startActivity(intent)
+                } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            binding.toPlatformBtn.setOnClickListener {
+                if (viewModel.uiState.value.course?.actualLink?.isNotEmpty() == true) {
+                    val webpage: Uri = Uri.parse(viewModel.uiState.value.course?.actualLink)
+                    val intent = Intent(Intent.ACTION_VIEW, webpage)
+                    startActivity(intent)
+                } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
+                    .show()
             }
 
             // Установить имя перехода
@@ -66,6 +97,12 @@ class CourseInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            viewModel.uiState.collect {
+
+            }
+        }
     }
 
 }

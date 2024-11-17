@@ -12,4 +12,6 @@
     <string name="start_course_title">Начать курс</string>
     <string name="to_platform_title">Перейти на платформу</string>
     <string name="about_course_title">О курсе</string>
+    <string name="description_empty">Описание отсутствует</string>
+    <string name="absent">Отсутствуют данные</string>
 </resources>

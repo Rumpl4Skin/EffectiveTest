@@ -1,4 +1,4 @@
-package com.example.effectivetest.presentation.interfaces
+package com.example.effectivetest.presentation.recycler.course
 
 import android.widget.ImageView
 import com.example.effetivetest.domain.model.Course

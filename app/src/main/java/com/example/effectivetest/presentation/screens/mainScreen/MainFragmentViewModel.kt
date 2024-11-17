@@ -2,12 +2,11 @@ package com.example.effectivetest.presentation.screens.mainScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.example.effectivetest.data.model.CategoryFilter
 import com.example.effectivetest.data.model.DifficultFilter
 import com.example.effectivetest.data.model.PricingFilter
 import com.example.effetivetest.domain.model.Course
-import com.example.effetivetest.domain.useCases.GetCoursesListUseCase
+import com.example.effetivetest.domain.useCases.GetCoursesListByPageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,11 +17,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainFragmentViewModel @Inject constructor(
-    private val getCoursesUseCase: GetCoursesListUseCase
+    private val getCoursesUseCase: GetCoursesListByPageUseCase
 ) :
     ViewModel() {
-    private val _uiState = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(UI.UiState())
+    val uiState: StateFlow<UI.UiState> = _uiState.asStateFlow()
 
     private var currentPage = 1
     private var hasNextPage = true
@@ -72,16 +71,20 @@ class MainFragmentViewModel @Inject constructor(
 
     }
 
-
+    object UI{
+        data class UiState(
+            val filterPanelVisibility: Boolean = false,
+            val categoryFilter: CategoryFilter = CategoryFilter.NONE,
+            val difficultFilter: DifficultFilter = DifficultFilter.NONE,
+            val pricingFilter: PricingFilter = PricingFilter.NONE,
+            val courses: List<Course> = emptyList(),
+            val newCourses: List<Course> = emptyList(),
+            val newItemLoad: Int = 0,
+        )
+    }
 }
 
-data class UiState(
-    val filterPanelVisibility: Boolean = false,
-    val categoryFilter: CategoryFilter = CategoryFilter.NONE,
-    val difficultFilter: DifficultFilter = DifficultFilter.NONE,
-    val pricingFilter: PricingFilter = PricingFilter.NONE,
-    val courses: List<Course> = emptyList(),
-    val newCourses: List<Course> = emptyList(),
-    val newItemLoad: Int = 0,
-)
+
+
+
 

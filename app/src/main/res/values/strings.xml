@@ -12,4 +12,6 @@
     <string name="start_course_title">Start Course</string>
     <string name="to_platform_title">Go to platform</string>
     <string name="about_course_title">About course</string>
+    <string name="description_empty">There is no description</string>
+    <string name="absent">Absent</string>
 </resources>

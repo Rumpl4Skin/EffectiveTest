@@ -1,9 +1,7 @@
-package com.example.effectivetest.presentation
+package com.example.effectivetest.presentation.recycler.course
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.effectivetest.presentation.interfaces.CourseItemClickListener
 import com.example.effetivetest.domain.model.Course
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegatesManager
 
