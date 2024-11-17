@@ -105,7 +105,7 @@ class MainFragment : Fragment(), CourseItemClickListener {
     }
 
     override fun onCourseFavItemClicked(course: Course) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onCourseDetailItemClicked(course: Course, image: ImageView) {

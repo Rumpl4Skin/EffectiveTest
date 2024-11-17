@@ -8,4 +8,8 @@
     <string name="search_title">Искать курсы</string>
     <string name="detail_course">Подробнее →</string>
     <string name="is_free">Бесплатно</string>
+    <string name="author_title">Автор</string>
+    <string name="start_course_title">Начать курс</string>
+    <string name="to_platform_title">Перейти на платформу</string>
+    <string name="about_course_title">О курсе</string>
 </resources>

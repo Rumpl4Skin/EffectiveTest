@@ -8,4 +8,8 @@
     <string name="search_title">Search courses</string>
     <string name="detail_course">to detail →</string>
     <string name="is_free">Free</string>
+    <string name="author_title">Author</string>
+    <string name="start_course_title">Start Course</string>
+    <string name="to_platform_title">Go to platform</string>
+    <string name="about_course_title">About course</string>
 </resources>
