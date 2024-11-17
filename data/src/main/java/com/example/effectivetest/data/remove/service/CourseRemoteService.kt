@@ -7,6 +7,6 @@ import retrofit2.http.Query
 interface CourseRemoteService {
     @GET("courses")
     suspend fun getCoursesListByPage(
-        @Query("page") page: Int = 1
+        @Query("page") page: Int
     ): CourseResponse
 }

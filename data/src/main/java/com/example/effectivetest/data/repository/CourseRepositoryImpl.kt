@@ -10,7 +10,6 @@ class CourseRepositoryImpl @Inject constructor(private val apiService: CourseRem
     CourseRepository {
 
     override suspend fun getCourses(page: Int): CourseResponse {
-        Log.e("TAG", "")
-        return apiService.getCoursesListByPage(1)
+        return apiService.getCoursesListByPage(page = page)
     }
 }

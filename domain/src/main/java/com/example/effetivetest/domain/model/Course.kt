@@ -1,11 +1,7 @@
 package com.example.effetivetest.domain.model
 
-
-
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.Date
-
 
 @Serializable
 data class Course(
@@ -125,6 +121,10 @@ data class Course(
 
     @SerialName("time_to_complete")
     val timeToComplete: Long? = null,
+
+    @SerialName("update_date")
+    val updateDate: String? = null,
+
 
     /*@SerialName("options")
     val courseOptions: CourseOptions? = null,

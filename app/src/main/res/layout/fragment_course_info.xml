@@ -5,10 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".presentation.screens.courseInfoScreen.CourseInfoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <ImageView
+        android:id="@+id/courseImg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:contentDescription="TODO"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
 
 </FrameLayout>

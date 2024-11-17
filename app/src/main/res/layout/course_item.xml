@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="236.dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8.dp"
     app:cardBackgroundColor="@color/dark_grey"
     app:cardCornerRadius="16.dp"
     app:cardElevation="4.dp">
@@ -16,21 +17,21 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:paddingBottom="8.dp">
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 app:cardBackgroundColor="#00FFFFFF"
                 app:cardCornerRadius="16.dp"
                 app:strokeColor="#00FFFFFF">
 
                 <ImageView
                     android:id="@+id/courseImg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="114.dp"
+                    android:scaleType="center"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
             </com.google.android.material.card.MaterialCardView>
 
@@ -53,7 +54,7 @@
             </FrameLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
                 android:orientation="horizontal"
@@ -63,15 +64,24 @@
                     android:id="@+id/ratingTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="4.dp"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:background="@drawable/category_background"
+                    android:padding="8.dp"
+                    android:text="TextView"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/lastUpdTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:background="@drawable/category_background"
+                    android:padding="8.dp"
+                    android:text="TextView"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
             </LinearLayout>
         </FrameLayout>
 
@@ -81,7 +91,8 @@
             android:layout_weight="2"
             android:orientation="vertical"
             android:paddingStart="8.dp"
-            android:paddingLeft="8.dp">
+            android:paddingLeft="8.dp"
+            android:paddingRight="8.dp">
 
             <TextView
                 android:id="@+id/nameCourseTxt"
@@ -99,6 +110,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:paddingTop="8.dp"
                 android:text="descriptionCourse"
                 android:textColor="@color/white"

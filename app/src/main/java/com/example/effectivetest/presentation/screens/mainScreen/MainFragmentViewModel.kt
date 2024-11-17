@@ -2,6 +2,7 @@ package com.example.effectivetest.presentation.screens.mainScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.example.effectivetest.data.model.CategoryFilter
 import com.example.effectivetest.data.model.DifficultFilter
 import com.example.effectivetest.data.model.PricingFilter
@@ -17,11 +18,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainFragmentViewModel @Inject constructor(
-    private val getCoursesUseCase: GetCoursesListUseCase) :
+    private val getCoursesUseCase: GetCoursesListUseCase
+) :
     ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
+    private var currentPage = 1
+    private var hasNextPage = true
+
+    init {
+        getCoursesList()
+    }
 
     fun changeFilterPanelVisibility() {
         _uiState.value =
@@ -41,12 +49,29 @@ class MainFragmentViewModel @Inject constructor(
     }
 
     fun getCoursesList() {
+        if (hasNextPage) {
             viewModelScope.launch {
-                _uiState.update {
-                    it.copy(courses = getCoursesUseCase.execute(1).courses)
+                try {
+                    var response = getCoursesUseCase.execute(page = currentPage)
+                    currentPage++
+                    hasNextPage = response.meta.hasNext
+                    _uiState.update {
+                        response = response.apply {
+                            this.courses.filter { loadedCourse -> it.courses.contains(loadedCourse) }
+                        }
+                        _uiState.value.copy(
+                            courses = it.courses + response.courses,
+                            newCourses = response.courses,
+                            newItemLoad = response.courses.size
+                        )
+                    }
+                } catch (e: Exception) { // Обработка ошибки
                 }
             }
+        }
+
     }
+
 
 }
 
@@ -55,6 +80,8 @@ data class UiState(
     val categoryFilter: CategoryFilter = CategoryFilter.NONE,
     val difficultFilter: DifficultFilter = DifficultFilter.NONE,
     val pricingFilter: PricingFilter = PricingFilter.NONE,
-    val courses: List<Course> = emptyList()
+    val courses: List<Course> = emptyList(),
+    val newCourses: List<Course> = emptyList(),
+    val newItemLoad: Int = 0,
 )
 

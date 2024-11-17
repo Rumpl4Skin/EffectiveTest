@@ -1,8 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
+  //  id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
+
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -54,8 +57,25 @@ dependencies {
 
     //DI
     implementation("com.google.dagger:hilt-android:2.52")
-    kapt ("com.google.dagger:hilt-compiler:2.52")
+    //kapt("com.google.dagger:hilt-compiler:2.52")
+    implementation("com.google.dagger:dagger-compiler:2.52")
+    ksp("com.google.dagger:dagger-compiler:2.52")
+    //kapt ("com.google.dagger:hilt-android-compiler:2.28-alpha")
 
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    //RecyclerView
+    implementation("com.hannesdorfmann:adapterdelegates4:4.3.2")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    //Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    //kapt("com.github.bumptech.glide:compiler:4.16.0")
+    ksp ("com.github.bumptech.glide:ksp:4.16.0")
+
+    //pagination
+    implementation("androidx.paging:paging-runtime:3.3.4")
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.core.ktx)

@@ -201,13 +201,16 @@
 
     </LinearLayout>
 
-    <!-- TODO: Update blank fragment layout -->
-    <include layout="@layout/course_item" />
-
-    <TextView
-        android:id="@+id/text"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="main" />
+        android:layout_marginTop="8.dp"
+        android:orientation="vertical">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 </LinearLayout>

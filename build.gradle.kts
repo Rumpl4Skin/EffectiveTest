@@ -5,7 +5,12 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.android.library) apply false
-    id("com.google.dagger.hilt.android") version libs.versions.hilt apply false
+
+
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.hilt) apply false
 
     alias(libs.plugins.kotlinx.serialization) apply false
+    alias(libs.plugins.navigation.args) version libs.versions.navArgs apply false
+
 }

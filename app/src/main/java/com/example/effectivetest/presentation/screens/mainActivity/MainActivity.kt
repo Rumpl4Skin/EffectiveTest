@@ -30,15 +30,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bottomNavigationView = binding.bottomNavigation
-        bottomNavigationView.setupWithNavController(navController)
-
-        //val navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val bottomNavigationView = binding.bottomNavigation
+        bottomNavigationView.setupWithNavController(navController)
     }
 
 

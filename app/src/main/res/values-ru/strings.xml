@@ -7,4 +7,5 @@
     <string name="account">Аккаунт</string>
     <string name="search_title">Искать курсы</string>
     <string name="detail_course">Подробнее →</string>
+    <string name="is_free">Бесплатно</string>
 </resources>
