@@ -1,5 +1,7 @@
 package com.example.effectivetest.presentation.screens.mainScreen
 
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.effectivetest.data.model.CategoryFilter
@@ -63,25 +65,26 @@ class MainFragmentViewModel @Inject constructor(
                             newCourses = response.courses,
                             newItemLoad = response.courses.size
                         )
-                    }
-                } catch (e: Exception) { // Обработка ошибки
-                }
-            }
-        }
+                 }
+                 } catch (e: Exception) { // Обработка ошибки
+                    e.localizedMessage?.let { Log.e("TAB", "$it!!!!!!!!") }
+                 }
+}
+}
 
-    }
+}
 
-    object UI{
-        data class UiState(
-            val filterPanelVisibility: Boolean = false,
-            val categoryFilter: CategoryFilter = CategoryFilter.NONE,
-            val difficultFilter: DifficultFilter = DifficultFilter.NONE,
-            val pricingFilter: PricingFilter = PricingFilter.NONE,
-            val courses: List<Course> = emptyList(),
-            val newCourses: List<Course> = emptyList(),
-            val newItemLoad: Int = 0,
-        )
-    }
+object UI{
+data class UiState(
+val filterPanelVisibility: Boolean = false,
+val categoryFilter: CategoryFilter = CategoryFilter.NONE,
+val difficultFilter: DifficultFilter = DifficultFilter.NONE,
+val pricingFilter: PricingFilter = PricingFilter.NONE,
+val courses: List<Course> = emptyList(),
+val newCourses: List<Course> = emptyList(),
+val newItemLoad: Int = 0,
+)
+}
 }
 
 

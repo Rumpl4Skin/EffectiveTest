@@ -2,9 +2,11 @@ package com.example.effectivetest.data.di
 
 import android.content.Context
 import com.example.effectivetest.data.Constants
+import com.example.effectivetest.data.remove.service.AuthorRemoteService
 import com.example.effectivetest.data.repository.CourseRepositoryImpl
 import com.example.effectivetest.data.remove.service.CourseRemoteService
 import com.example.effetivetest.domain.repository.CourseRepository
+import com.example.effetivetest.domain.useCases.GetCourseAuthorInfoUseCase
 import com.example.effetivetest.domain.useCases.GetCoursesListByPageUseCase
 import dagger.Module
 import dagger.Provides
@@ -42,10 +44,9 @@ class NetworkModule {
         }
     }
 
-
     @Provides
     @Singleton
-    fun provideApiService(json: Json, okHttpClient: OkHttpClient): CourseRemoteService {
+    fun provideRetrofit(json: Json, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .client(okHttpClient)
@@ -53,21 +54,42 @@ class NetworkModule {
                 json.asConverterFactory("application/json".toMediaType())
             )
             .build()
-            .create(CourseRemoteService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): CourseRemoteService {
+        return retrofit.create(CourseRemoteService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthorRemoteService(retrofit: Retrofit): AuthorRemoteService {
+        return retrofit.create(AuthorRemoteService::class.java)
     }
 
     @Provides
     @Singleton
     fun provideCourseRepository(
         courseListService: CourseRemoteService,
+        authorRemoteService: AuthorRemoteService
     ): CourseRepository {
-        return CourseRepositoryImpl(courseListService)
+        return CourseRepositoryImpl(
+            coursesByPageService = courseListService,
+            authorByIdService = authorRemoteService
+        )
     }
 
     @Provides
     @Singleton
     fun provideGetCoursesListUseCase(repository: CourseRepository): GetCoursesListByPageUseCase {
         return GetCoursesListByPageUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCourseAuthorInfoUseCase(repository: CourseRepository): GetCourseAuthorInfoUseCase {
+        return GetCourseAuthorInfoUseCase(repository)
     }
 
 
