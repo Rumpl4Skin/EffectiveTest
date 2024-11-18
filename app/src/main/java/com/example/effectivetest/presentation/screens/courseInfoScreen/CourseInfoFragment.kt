@@ -48,81 +48,87 @@ class CourseInfoFragment : Fragment() {
         _binding = FragmentCourseInfoBinding.inflate(inflater, container, false)
 
         //получение выбранного course из предыдущего экрана
-        sharedViewModel.selectedCourse.observe(viewLifecycleOwner) { course ->
-            viewModel.setCourse(course = course)
+        lifecycleScope.launch {
+            sharedViewModel.selectedCourse.collect { course ->
+                viewModel.setCourse(course = course)
 
-            //png support
-            val imageView: ImageView = binding.courseImg
-            Glide.with(this).load(viewModel.uiState.value.course.cover)
-                .placeholder(R.drawable.search_background).error(R.drawable.ic_search)
-                .into(imageView)
+                //png support
+                val imageView: ImageView = binding.courseImg
+                Glide.with(requireContext()).load(viewModel.uiState.value.course.cover)
+                    .placeholder(R.drawable.search_background).error(R.drawable.ic_search)
+                    .into(imageView)
 
-            //svg support
-            requestBuilder =
-                Glide.with(this)
-                    .`as`(PictureDrawable::class.java)
-                    .placeholder(R.drawable.search_background)
-                    .error(R.drawable.ic_search)
-                    .listener(SvgSoftwareLayerSetter())
+                //svg support
+                requestBuilder =
+                    Glide.with(requireContext())
+                        .`as`(PictureDrawable::class.java)
+                        .placeholder(R.drawable.search_background)
+                        .error(R.drawable.ic_search)
+                        .listener(SvgSoftwareLayerSetter())
 
-            binding.lastUpdTxt.text = viewModel.uiState.value.course.updateDate
-            binding.courseNameTxt.text =
-                viewModel.uiState.value.course.title.ifEmpty { context?.getString(R.string.absent) }
-            binding.courseAuthorTxt.text =
-                viewModel.uiState.value.course.author.fullName.ifEmpty {
-                    context?.getString(
-                        R.string.absent
-                    )
-                }
-            binding.ratingTxt.text =
-                viewModel.uiState.value.course.rating.toString().ifEmpty {
-                    context?.getString(
-                        R.string.absent
-                    )
-                }
+                binding.lastUpdTxt.text = viewModel.uiState.value.course.updateDate
+                binding.courseNameTxt.text =
+                    viewModel.uiState.value.course.title.ifEmpty { context?.getString(R.string.absent) }
+                binding.courseAuthorTxt.text =
+                    viewModel.uiState.value.course.author.fullName.ifEmpty {
+                        context?.getString(
+                            R.string.absent
+                        )
+                    }
+                binding.ratingTxt.text =
+                    viewModel.uiState.value.course.rating.toString().ifEmpty {
+                        context?.getString(
+                            R.string.absent
+                        )
+                    }
 
 
-            binding.courseDescriptionTxt.text = Html.fromHtml(
-                viewModel.uiState.value.course.description,
-                Html.FROM_HTML_MODE_COMPACT
-            )?.ifEmpty { context?.getString(R.string.absent) }
-            binding.isFavBtn.background =
+                binding.courseDescriptionTxt.text = Html.fromHtml(
+                    viewModel.uiState.value.course.description,
+                    Html.FROM_HTML_MODE_COMPACT
+                )?.ifEmpty { context?.getString(R.string.absent) }
+                /*binding.isFavBtn.background =
                 context?.let {
                     AppCompatResources.getDrawable(
                         it,
                         if (viewModel.uiState.value.course.isFavorite) R.drawable.ic_is_fav_sel else R.drawable.ic_favorite
                     )
+                }*/
+                binding.isFavBtn.isChecked = viewModel.uiState.value.course.isFavorite
+
+
+                binding.isFavBtn.setOnClickListener {
+                    viewModel.uiState.value.course.copy(isFavorite = !viewModel.uiState.value.course.isFavorite)
+                        .let { it1 -> viewModel.setCourse(it1) }
                 }
 
-            binding.isFavBtn.setOnClickListener {
-                viewModel.uiState.value.course.copy(isFavorite = !viewModel.uiState.value.course.isFavorite)
-                    .let { it1 -> viewModel.setCourse(it1) }
-            }
+                binding.goBackBtn.setOnClickListener {
+                    sharedViewModel.selectCourse(viewModel.uiState.value.course)
+                    findNavController().popBackStack()
 
-            binding.goBackBtn.setOnClickListener {
-                findNavController().popBackStack()
-            }
+                }
 
-            binding.startCourseBtn.setOnClickListener {
-                if (viewModel.uiState.value.course.actualLink.isNotEmpty()) {
-                    val webpage: Uri = Uri.parse(viewModel.uiState.value.course.actualLink)
-                    val intent = Intent(Intent.ACTION_VIEW, webpage)
-                    startActivity(intent)
-                } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
-                    .show()
-            }
+                binding.startCourseBtn.setOnClickListener {
+                    if (viewModel.uiState.value.course.actualLink.isNotEmpty()) {
+                        val webpage: Uri = Uri.parse(viewModel.uiState.value.course.actualLink)
+                        val intent = Intent(Intent.ACTION_VIEW, webpage)
+                        startActivity(intent)
+                    } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
+                        .show()
+                }
 
-            binding.toPlatformBtn.setOnClickListener {
-                if (viewModel.uiState.value.course.actualLink.isNotEmpty()) {
-                    val webpage: Uri = Uri.parse(viewModel.uiState.value.course.actualLink)
-                    val intent = Intent(Intent.ACTION_VIEW, webpage)
-                    startActivity(intent)
-                } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
-                    .show()
-            }
+                binding.toPlatformBtn.setOnClickListener {
+                    if (viewModel.uiState.value.course.actualLink.isNotEmpty()) {
+                        val webpage: Uri = Uri.parse(viewModel.uiState.value.course.actualLink)
+                        val intent = Intent(Intent.ACTION_VIEW, webpage)
+                        startActivity(intent)
+                    } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
+                        .show()
+                }
 
-            // Установить имя перехода
-            ViewCompat.setTransitionName(imageView, "courseImageTransition")
+                // Установить имя перехода
+                ViewCompat.setTransitionName(imageView, "courseImageTransition")
+            }
         }
         return binding.root
     }
@@ -131,17 +137,14 @@ class CourseInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-
             viewModel.uiState.collect {
                 val url = viewModel.uiState.value.course.author.photo
                 if (it.course.author.id.toInt() != 0 && url.isNotEmpty()) {
-                    if (url[url.length - 2] == 'v' ) {
+                    if (url[url.length - 2] == 'v') { //svg
                         requestBuilder.load(viewModel.uiState.value.course.author.photo)
                             .apply(RequestOptions.bitmapTransform(CircleCrop()))
                             .into(binding.authorImg)
-
-                    } else {
-
+                    } else { //other img format
                         Glide.with(requireContext())
                             .load(viewModel.uiState.value.course.author.photo)
                             .apply(RequestOptions.bitmapTransform(CircleCrop()))
@@ -152,6 +155,9 @@ class CourseInfoFragment : Fragment() {
                 }
 
                 binding.courseAuthorTxt.text = it.course.author.fullName
+                binding.isFavBtn.isChecked = it.course.isFavorite
+
+                sharedViewModel.selectCourse(it.course)
             }
         }
     }

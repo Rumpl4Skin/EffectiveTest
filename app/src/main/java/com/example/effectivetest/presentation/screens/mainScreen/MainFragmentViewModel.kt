@@ -94,13 +94,24 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-    fun updCoursesWithoutRepetitions() {
+    fun setCourseFav(course: Course) {
+        val newList =
+            _uiState.value.courses.map { if (it == course) it.copy(isFavorite = !it.isFavorite) else it }
         _uiState.update {
             _uiState.value.copy(
-                courses = it.courses.filter { course -> !it.courses.contains(course) },
+                courses = newList
             )
         }
+    }
 
+    fun updCourse(course: Course){
+        val newList =
+            _uiState.value.courses.map { if (it == course) it.copy(isFavorite = course.isFavorite) else it }
+        _uiState.update {
+            _uiState.value.copy(
+                courses = newList
+            )
+        }
     }
 
     object UI {

@@ -67,6 +67,11 @@ class MainFragment : Fragment(), CourseItemClickListener {
                 courseAdapter.addItems(uiState.newCourses, uiState.newItemLoad)
             }
         }
+        lifecycleScope.launch {
+            sharedViewModel.selectedCourse.collect { course ->
+                viewModel.updCourse(course = course)
+            }
+        }
 
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -86,18 +91,15 @@ class MainFragment : Fragment(), CourseItemClickListener {
             }
             viewModel.changeFilterPanelVisibility()
         }
-
     }
 
     override fun onResume() {
         super.onResume()
-        //viewModel.startPagePos()
         courseAdapter.clearItems()
         courseAdapter.addItems(
             viewModel.uiState.value.courses,
             viewModel.uiState.value.courses.size
         )
-        //viewModel.updCoursesWithoutRepetitions()
     }
 
     private fun slideDown() {
@@ -143,7 +145,7 @@ class MainFragment : Fragment(), CourseItemClickListener {
     }
 
     override fun onCourseFavItemClicked(course: Course) {
-
+        viewModel.setCourseFav(course = course)
     }
 
     override fun onCourseDetailItemClicked(course: Course, image: ImageView) {

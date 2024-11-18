@@ -2,7 +2,6 @@ package com.example.effectivetest.presentation.screens.courseInfoScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.effetivetest.domain.model.Author
 import com.example.effetivetest.domain.model.Course
 import com.example.effetivetest.domain.useCases.GetCourseAuthorInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,22 +20,21 @@ class CourseInfoFragmentViewModel @Inject constructor(
     val uiState: StateFlow<UI.UiState> = _uiState.asStateFlow()
 
     fun setCourse(course: Course) {
-
         if (course.author.id.toInt() != 0) {
-            getAuthInfo(id = course.author.id)
+            getAuthorInfo(authorId = course.author.id)
             _uiState.update {
                 it.copy(course = course)
             }
         }
     }
 
-    private fun getAuthInfo(id: Long) {
+    private fun getAuthorInfo(authorId: Long) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
                     course = _uiState.value.course.copy(
                         author = getCourseAuthorInfoUseCase.execute(
-                            id = id
+                            id = authorId
                         )
                     )
                 )
