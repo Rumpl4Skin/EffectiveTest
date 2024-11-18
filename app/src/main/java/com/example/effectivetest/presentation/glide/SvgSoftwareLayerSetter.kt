@@ -1,4 +1,4 @@
-package com.bumptech.glide.samples.svg
+package com.example.effectivetest.presentation.glide
 
 import android.graphics.drawable.PictureDrawable
 import android.widget.ImageView

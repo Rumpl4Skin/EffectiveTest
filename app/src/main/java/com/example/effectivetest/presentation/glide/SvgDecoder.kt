@@ -30,7 +30,7 @@ class SvgDecoder : ResourceDecoder<InputStream, SVG> {
             if (height != Target.SIZE_ORIGINAL) {
                 svg.documentHeight = height.toFloat()
             }
-            return SimpleResource<SVG>(svg)
+            return SimpleResource(svg)
         } catch (ex: SVGParseException) {
             throw IOException("Cannot load SVG from stream", ex)
         }

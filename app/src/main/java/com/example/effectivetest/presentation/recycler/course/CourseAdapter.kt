@@ -5,7 +5,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.effetivetest.domain.model.Course
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegatesManager
 
-class CourseAdapter(onFavClick: CourseItemClickListener, onDetailCourseClick: CourseItemClickListener) :
+class CourseAdapter(
+    onFavClick: CourseItemClickListener,
+    onDetailCourseClick: CourseItemClickListener
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val delegatesManager = AdapterDelegatesManager<List<DisplayableItem>>()
     private var items: List<DisplayableItem> = emptyList()
@@ -36,8 +39,15 @@ class CourseAdapter(onFavClick: CourseItemClickListener, onDetailCourseClick: Co
     }
 
     fun addItems(newItems: List<Course>, countNewItems: Int) {
-        items = items + newItems.map { CourseDisplayableItem(it) }
-        notifyItemRangeChanged(itemCount, countNewItems)
+        if (newItems.isNotEmpty() && countNewItems != 0) {
+            items = (items + newItems.map { CourseDisplayableItem(it) }).distinctBy { it }
+            notifyItemRangeChanged(itemCount, countNewItems)
+        }
+    }
+
+    fun clearItems() {
+        notifyItemRangeRemoved(0, itemCount)
+        items = emptyList()
 
     }
 }

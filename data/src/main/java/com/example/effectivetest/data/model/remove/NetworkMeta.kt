@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NetworkMeta (
+data class NetworkMeta(
     @SerialName("page")
     val page: Int,
     @SerialName("has_next")

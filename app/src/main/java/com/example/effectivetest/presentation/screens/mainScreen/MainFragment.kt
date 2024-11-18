@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -62,6 +63,7 @@ class MainFragment : Fragment(), CourseItemClickListener {
             viewModel.uiState.collect { uiState ->
                 filterPanel.visibility =
                     if (uiState.filterPanelVisibility) View.VISIBLE else View.GONE
+
                 courseAdapter.addItems(uiState.newCourses, uiState.newItemLoad)
             }
         }
@@ -87,14 +89,51 @@ class MainFragment : Fragment(), CourseItemClickListener {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        //viewModel.startPagePos()
+        courseAdapter.clearItems()
+        courseAdapter.addItems(
+            viewModel.uiState.value.courses,
+            viewModel.uiState.value.courses.size
+        )
+        //viewModel.updCoursesWithoutRepetitions()
+    }
+
     private fun slideDown() {
-        filterPanel.visibility = View.INVISIBLE
         val slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down)
+        slideDown.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) { // Действия в начале анимации (если необходимы)
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                // Действия после завершения анимации
+                filterPanel.visibility = View.VISIBLE
+            }
+
+            override fun onAnimationRepeat(animation: Animation?) {
+                // Действия при повторении анимации (если необходимы)
+            }
+        })
         filterPanel.startAnimation(slideDown)
     }
 
     private fun slideUp() {
         val slideUp = AnimationUtils.loadAnimation(context, R.anim.slide_up)
+        slideUp.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
+                //filterPanel.visibility = View.VISIBLE
+                filterPanel.visibility = View.GONE
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+
+        })
         filterPanel.startAnimation(slideUp)
     }
 
@@ -111,7 +150,7 @@ class MainFragment : Fragment(), CourseItemClickListener {
         sharedViewModel.selectCourse(course = course)
         // Установить имя перехода
         ViewCompat.setTransitionName(image, "courseImage")
-        val action =  MainFragmentDirections.actionCoursesFragmentToCourseDetailFragment()
+        val action = MainFragmentDirections.actionCoursesFragmentToCourseDetailFragment()
         val extras = FragmentNavigatorExtras(image to "courseImage")
         findNavController().navigate(
             action,

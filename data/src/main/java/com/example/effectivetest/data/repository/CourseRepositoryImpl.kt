@@ -7,6 +7,7 @@ import com.example.effectivetest.data.model.remove.NetworkCourseResponse
 import com.example.effectivetest.data.model.remove.NetworkMeta
 import com.example.effectivetest.data.remove.service.AuthorRemoteService
 import com.example.effectivetest.data.remove.service.CourseRemoteService
+import com.example.effectivetest.data.roundToDecimalPlaces
 import com.example.effetivetest.domain.model.Author
 import com.example.effetivetest.domain.model.Course
 import com.example.effetivetest.domain.model.Meta
@@ -37,13 +38,14 @@ class CourseRepositoryImpl @Inject constructor(
             description = this.description ?: "",
             cover = this.cover ?: "",
             updateDate = this.getNormalDateUpdate(),
-            price = this.price?.toDoubleOrNull() ?: 0.0,
+            price = this.displayPrice ?:"-",
             isFavorite = this.isFavorite,
-            rating = 0.0f,
+            rating = this.calculateRating().roundToDecimalPlaces(1),
             author = if (this.authors?.isNotEmpty() == true) this.authors.map { idAuth-> Author(id = idAuth) }
                 .first()
             else Author(id = 0),
-            actualLink = this.canonicalUrl ?: ""
+            actualLink = this.canonicalUrl ?: "",
+            isActive = this.isActive
         )
     }
 

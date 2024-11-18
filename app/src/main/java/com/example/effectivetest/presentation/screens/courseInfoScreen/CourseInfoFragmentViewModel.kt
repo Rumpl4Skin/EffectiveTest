@@ -21,16 +21,25 @@ class CourseInfoFragmentViewModel @Inject constructor(
     val uiState: StateFlow<UI.UiState> = _uiState.asStateFlow()
 
     fun setCourse(course: Course) {
-        getAuthInfo(id = course.author.id)
-        _uiState.update {
-            it.copy(course = course)
+
+        if (course.author.id.toInt() != 0) {
+            getAuthInfo(id = course.author.id)
+            _uiState.update {
+                it.copy(course = course)
+            }
         }
     }
 
-    private fun getAuthInfo(id:Long){
+    private fun getAuthInfo(id: Long) {
         viewModelScope.launch {
             _uiState.update {
-            it.copy(course = _uiState.value.course.copy(author = getCourseAuthorInfoUseCase.execute(id = id)))
+                it.copy(
+                    course = _uiState.value.course.copy(
+                        author = getCourseAuthorInfoUseCase.execute(
+                            id = id
+                        )
+                    )
+                )
             }
         }
 

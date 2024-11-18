@@ -59,10 +59,11 @@ class CourseItemDelegate(
             descriptionCourseTxt.text = Html.fromHtml(course.description, Html.FROM_HTML_MODE_COMPACT).ifEmpty { itemView.context.getString(R.string.absent) }
             lastUpdTxt.text = course.updateDate.ifEmpty { itemView.context.getString(R.string.absent) }
             priceTxt.text =
-                if (course.price != 0.0) course.price.toString() else itemView.context.getString(R.string.is_free)
+                if (course.price != "-") course.price else itemView.context.getString(R.string.is_free)
             // Glide, чтобы загрузить изображение
             Glide.with(itemView.context).load(course.cover).into(courseImg)
             toFavoriteBtn.isChecked = course.isFavorite
+            ratingTxt.text = course.rating.toString()
 
             toDetailCourseTxt.setOnClickListener {
                 onFavClick.onCourseDetailItemClicked(

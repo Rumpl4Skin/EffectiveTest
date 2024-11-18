@@ -132,6 +132,13 @@ data class NetworkCourse(
     @SerialName("canonical_url")
     val canonicalUrl: String? = null,
 
+    @SerialName("is_popular")
+    val isPopular: Boolean = false,
+    @SerialName("difficulty")
+    val difficulty: String? = null,
+    @SerialName("lessons_count")
+    val lessonsCount: Long? = null,
+
 
     /*@SerialName("options")
     val courseOptions: CourseOptions? = null,
@@ -179,5 +186,22 @@ data class NetworkCourse(
             return this.updateDate.toString()
         }
 
+    }
+
+    fun calculateRating(): Double {
+        // Базовый рейтинг с учетом рабочей нагрузки и количества уроков
+        val workload: Double = this.workload?.toDoubleOrNull() ?: 0.0
+        var rating = (workload * 0.1) + (this.lessonsCount?.times(0.1) ?: 0.0)
+        // Добавление баллов за популярность и активность
+        if (this.isPopular) rating += 1.0
+        if (this.isActive) rating += 1.0 // Учитываем количество учащихся (чем больше, тем выше рейтинг)
+        rating += (this.learnersCount * 0.0001) // Учет сложности (простой = 0.5, средний = 1.0, сложный = 1.5)
+        rating += when (this.difficulty) {
+            "easy" -> 0.5
+            "medium" -> 1.0
+            "hard" -> 1.5
+            else -> 0.0
+        } // Ограничиваем максимальный рейтинг до 5.0
+        return rating.coerceAtMost(5.0)
     }
 }

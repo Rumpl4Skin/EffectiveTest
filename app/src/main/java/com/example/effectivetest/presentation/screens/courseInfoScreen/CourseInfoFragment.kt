@@ -21,8 +21,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
-import com.bumptech.glide.samples.svg.SvgSoftwareLayerSetter
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
+import com.example.effectivetest.presentation.glide.SvgSoftwareLayerSetter
 import com.example.effectivetest.R
 import com.example.effectivetest.databinding.FragmentCourseInfoBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +37,7 @@ class CourseInfoFragment : Fragment() {
     private val binding get() = _binding!!
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val viewModel: CourseInfoFragmentViewModel by viewModels()
-    private var requestBuilder: RequestBuilder<PictureDrawable>? = null
+    private lateinit var requestBuilder: RequestBuilder<PictureDrawable>
 
 
     override fun onCreateView(
@@ -49,11 +50,14 @@ class CourseInfoFragment : Fragment() {
         //получение выбранного course из предыдущего экрана
         sharedViewModel.selectedCourse.observe(viewLifecycleOwner) { course ->
             viewModel.setCourse(course = course)
+
+            //png support
             val imageView: ImageView = binding.courseImg
             Glide.with(this).load(viewModel.uiState.value.course.cover)
                 .placeholder(R.drawable.search_background).error(R.drawable.ic_search)
                 .into(imageView)
 
+            //svg support
             requestBuilder =
                 Glide.with(this)
                     .`as`(PictureDrawable::class.java)
@@ -61,10 +65,7 @@ class CourseInfoFragment : Fragment() {
                     .error(R.drawable.ic_search)
                     .listener(SvgSoftwareLayerSetter())
 
-            /* Glide.with(this).load(viewModel.uiState.value.course.author.photo)
-                 .placeholder(R.drawable.search_background).error(R.drawable.ic_search)
-                 .into(binding.authorImg)*/
-
+            binding.lastUpdTxt.text = viewModel.uiState.value.course.updateDate
             binding.courseNameTxt.text =
                 viewModel.uiState.value.course.title.ifEmpty { context?.getString(R.string.absent) }
             binding.courseAuthorTxt.text =
@@ -73,6 +74,14 @@ class CourseInfoFragment : Fragment() {
                         R.string.absent
                     )
                 }
+            binding.ratingTxt.text =
+                viewModel.uiState.value.course.rating.toString().ifEmpty {
+                    context?.getString(
+                        R.string.absent
+                    )
+                }
+
+
             binding.courseDescriptionTxt.text = Html.fromHtml(
                 viewModel.uiState.value.course.description,
                 Html.FROM_HTML_MODE_COMPACT
@@ -127,13 +136,15 @@ class CourseInfoFragment : Fragment() {
                 val url = viewModel.uiState.value.course.author.photo
                 if (it.course.author.id.toInt() != 0 && url.isNotEmpty()) {
                     if (url[url.length - 2] == 'v' ) {
-                        requestBuilder?.load(viewModel.uiState.value.course.author.photo)
-                            ?.into(binding.authorImg)
+                        requestBuilder.load(viewModel.uiState.value.course.author.photo)
+                            .apply(RequestOptions.bitmapTransform(CircleCrop()))
+                            .into(binding.authorImg)
 
                     } else {
 
                         Glide.with(requireContext())
                             .load(viewModel.uiState.value.course.author.photo)
+                            .apply(RequestOptions.bitmapTransform(CircleCrop()))
                             .placeholder(R.drawable.search_background)
                             .error(R.drawable.ic_search)
                             .into(binding.authorImg)

@@ -32,6 +32,15 @@ class MainFragmentViewModel @Inject constructor(
         getCoursesList()
     }
 
+    fun startPagePos() {
+        currentPage = 1
+        hasNextPage = true
+
+        _uiState.update {
+            it.copy(newCourses = emptyList(), newItemLoad = 0)
+        }
+    }
+
     fun changeFilterPanelVisibility() {
         _uiState.value =
             _uiState.value.copy(filterPanelVisibility = !_uiState.value.filterPanelVisibility)
@@ -54,37 +63,57 @@ class MainFragmentViewModel @Inject constructor(
             viewModelScope.launch {
                 try {
                     var response = getCoursesUseCase.execute(page = currentPage)
+
                     currentPage++
                     hasNextPage = response.meta.hasNext
+
+                    if (response.courses.isEmpty()) { // если возвращается пустой список на этой странице, вызываем заново
+                        getCoursesList()
+                        return@launch
+                    }
+
                     _uiState.update {
                         response = response.apply {
-                            this.courses.filter { loadedCourse -> it.courses.contains(loadedCourse) }
+                            courses.filter { it.isActive }
                         }
+
+                        val newCourses = response.apply {
+                            courses.filter { course -> !_uiState.value.courses.contains(course) }
+                        }.courses
+
                         _uiState.value.copy(
-                            courses = it.courses + response.courses,
-                            newCourses = response.courses,
-                            newItemLoad = response.courses.size
+                            courses = (_uiState.value.courses + newCourses).distinctBy { it.id },//it.courses + response.courses,
+                            newCourses = newCourses,
+                            newItemLoad = newCourses.size
                         )
-                 }
-                 } catch (e: Exception) { // Обработка ошибки
+                    }
+                } catch (e: Exception) { // Обработка ошибки
                     e.localizedMessage?.let { Log.e("TAB", "$it!!!!!!!!") }
-                 }
-}
-}
+                }
+            }
+        }
+    }
 
-}
+    fun updCoursesWithoutRepetitions() {
+        _uiState.update {
+            _uiState.value.copy(
+                courses = it.courses.filter { course -> !it.courses.contains(course) },
+            )
+        }
 
-object UI{
-data class UiState(
-val filterPanelVisibility: Boolean = false,
-val categoryFilter: CategoryFilter = CategoryFilter.NONE,
-val difficultFilter: DifficultFilter = DifficultFilter.NONE,
-val pricingFilter: PricingFilter = PricingFilter.NONE,
-val courses: List<Course> = emptyList(),
-val newCourses: List<Course> = emptyList(),
-val newItemLoad: Int = 0,
-)
-}
+    }
+
+    object UI {
+        data class UiState(
+            val filterPanelVisibility: Boolean = false,
+            val categoryFilter: CategoryFilter = CategoryFilter.NONE,
+            val difficultFilter: DifficultFilter = DifficultFilter.NONE,
+            val pricingFilter: PricingFilter = PricingFilter.NONE,
+            val courses: List<Course> = emptyList(),
+            val newCourses: List<Course> = emptyList(),
+            val newItemLoad: Int = 0,
+        )
+    }
 }
 
 

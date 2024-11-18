@@ -16,12 +16,51 @@
             android:isScrollContainer="true"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/courseImg"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="240.dp"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/courseImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="240.dp"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom"
+                    android:orientation="horizontal"
+                    android:padding="8.dp">
+
+                    <TextView
+                        android:id="@+id/ratingTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4.dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/category_background"
+                        android:drawableLeft="@drawable/ic_raiting"
+                        android:drawablePadding="2.dp"
+                        android:foregroundGravity="left|center_vertical"
+                        android:padding="8.dp"
+                        android:text="TextView"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/lastUpdTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/category_background"
+                        android:padding="8.dp"
+                        android:text="TextView"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/courseNameTxt"
@@ -174,5 +213,6 @@
                 android:textOn=" " />
 
         </FrameLayout>
+
     </FrameLayout>
 </ScrollView>
