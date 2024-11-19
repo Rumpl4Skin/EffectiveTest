@@ -5,10 +5,14 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.effectivetest.data.model.CategoryFilter
+import com.example.effectivetest.data.model.DataSource
 import com.example.effectivetest.data.model.DifficultFilter
 import com.example.effectivetest.data.model.PricingFilter
 import com.example.effetivetest.domain.model.Course
+import com.example.effetivetest.domain.useCases.GetCourseAuthorInfoUseCase
+import com.example.effetivetest.domain.useCases.GetCourseByIdDbUseCase
 import com.example.effetivetest.domain.useCases.GetCoursesListByPageUseCase
+import com.example.effetivetest.domain.useCases.InsertOrUpdateCourseDbUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +23,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainFragmentViewModel @Inject constructor(
-    private val getCoursesUseCase: GetCoursesListByPageUseCase
+    private val getCoursesUseCase: GetCoursesListByPageUseCase,
+    private val insertOrUpdateCourseDbUseCase: InsertOrUpdateCourseDbUseCase,
+    private val getCourseByIdDbUseCase: GetCourseByIdDbUseCase,
+    private val getCourseAuthorInfoUseCase: GetCourseAuthorInfoUseCase
 ) :
     ViewModel() {
     private val _uiState = MutableStateFlow(UI.UiState())
@@ -81,11 +88,23 @@ class MainFragmentViewModel @Inject constructor(
                             courses.filter { course -> !_uiState.value.courses.contains(course) }
                         }.courses
 
+                        viewModelScope.launch {
+                            newCourses.forEach {
+                                if (getCourseByIdDbUseCase.execute(it.id) == null) {
+                                    val author = getCourseAuthorInfoUseCase.execute(it.author.id)
+                                    insertOrUpdateCourseDbUseCase.execute(course = it.copy(author = author))
+                                    Log.i("TAG", "insert to db ${it.title}")
+                                }
+                            }
+                        }
+
                         _uiState.value.copy(
                             courses = (_uiState.value.courses + newCourses).distinctBy { it.id },//it.courses + response.courses,
                             newCourses = newCourses,
                             newItemLoad = newCourses.size
                         )
+
+
                     }
                 } catch (e: Exception) { // Обработка ошибки
                     e.localizedMessage?.let { Log.e("TAB", "$it!!!!!!!!") }
@@ -97,6 +116,10 @@ class MainFragmentViewModel @Inject constructor(
     fun setCourseFav(course: Course) {
         val newList =
             _uiState.value.courses.map { if (it == course) it.copy(isFavorite = !it.isFavorite) else it }
+
+        viewModelScope.launch {
+            insertOrUpdateCourseDbUseCase.execute(course)
+        }
         _uiState.update {
             _uiState.value.copy(
                 courses = newList
@@ -104,7 +127,7 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-    fun updCourse(course: Course){
+    fun updCourse(course: Course) {
         val newList =
             _uiState.value.courses.map { if (it == course) it.copy(isFavorite = course.isFavorite) else it }
         _uiState.update {
@@ -112,6 +135,32 @@ class MainFragmentViewModel @Inject constructor(
                 courses = newList
             )
         }
+    }
+
+    fun onNetworkStatusChange(isEnable: Boolean) {
+        _uiState.update {
+            it.copy(
+                internetConnectionEnabled = isEnable
+            )
+        }
+    }
+
+    fun goToOfflineMode(goOffline: Boolean) {
+        _uiState.update {
+            it.copy(dataSource = if (goOffline) DataSource.DB else DataSource.INTERNET)
+        }
+    }
+
+    fun checkFavStatus(courseId: Long) {
+        viewModelScope.launch {
+            val updatedCourse = getCourseByIdDbUseCase.execute(id = courseId)
+            _uiState.update {
+                it.copy(courses = _uiState.value.courses.map { course ->
+                    if (course.id == courseId) updatedCourse ?: course else course
+                })
+            }
+        }
+
     }
 
     object UI {
@@ -123,6 +172,8 @@ class MainFragmentViewModel @Inject constructor(
             val courses: List<Course> = emptyList(),
             val newCourses: List<Course> = emptyList(),
             val newItemLoad: Int = 0,
+            val dataSource: DataSource = DataSource.INTERNET,
+            val internetConnectionEnabled: Boolean = true
         )
     }
 }

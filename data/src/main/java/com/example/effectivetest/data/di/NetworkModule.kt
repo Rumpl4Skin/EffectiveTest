@@ -1,17 +1,17 @@
 package com.example.effectivetest.data.di
 
-import android.content.Context
 import com.example.effectivetest.data.Constants
-import com.example.effectivetest.data.remove.service.AuthorRemoteService
+import com.example.effectivetest.data.sources.remove.AuthorRemoteService
 import com.example.effectivetest.data.repository.CourseRepositoryImpl
-import com.example.effectivetest.data.remove.service.CourseRemoteService
+import com.example.effectivetest.data.sources.remove.CourseRemoteService
+import com.example.effectivetest.data.sources.room.AuthorDao
+import com.example.effectivetest.data.sources.room.CourseDao
 import com.example.effetivetest.domain.repository.CourseRepository
 import com.example.effetivetest.domain.useCases.GetCourseAuthorInfoUseCase
 import com.example.effetivetest.domain.useCases.GetCoursesListByPageUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -72,11 +72,15 @@ class NetworkModule {
     @Singleton
     fun provideCourseRepository(
         courseListService: CourseRemoteService,
-        authorRemoteService: AuthorRemoteService
+        authorRemoteService: AuthorRemoteService,
+        courseDao: CourseDao,
+        authorDao: AuthorDao,
     ): CourseRepository {
         return CourseRepositoryImpl(
             coursesByPageService = courseListService,
-            authorByIdService = authorRemoteService
+            authorByIdService = authorRemoteService,
+            courseDao = courseDao,
+            authorDao = authorDao,
         )
     }
 

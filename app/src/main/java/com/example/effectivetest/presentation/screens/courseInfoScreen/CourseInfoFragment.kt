@@ -1,6 +1,6 @@
 package com.example.effectivetest.presentation.screens.courseInfoScreen
 
-import SharedViewModel
+import com.example.effectivetest.presentation.screens.SharedViewModel
 
 import android.content.Intent
 import android.graphics.drawable.PictureDrawable
@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -51,12 +50,6 @@ class CourseInfoFragment : Fragment() {
         lifecycleScope.launch {
             sharedViewModel.selectedCourse.collect { course ->
                 viewModel.setCourse(course = course)
-
-                //png support
-                val imageView: ImageView = binding.courseImg
-                Glide.with(requireContext()).load(viewModel.uiState.value.course.cover)
-                    .placeholder(R.drawable.search_background).error(R.drawable.ic_search)
-                    .into(imageView)
 
                 //svg support
                 requestBuilder =
@@ -98,8 +91,7 @@ class CourseInfoFragment : Fragment() {
 
 
                 binding.isFavBtn.setOnClickListener {
-                    viewModel.uiState.value.course.copy(isFavorite = !viewModel.uiState.value.course.isFavorite)
-                        .let { it1 -> viewModel.setCourse(it1) }
+                    viewModel.updateCourseFav()
                 }
 
                 binding.goBackBtn.setOnClickListener {
@@ -125,7 +117,11 @@ class CourseInfoFragment : Fragment() {
                     } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
                         .show()
                 }
+                val imageView: ImageView = binding.courseImg
 
+                Glide.with(requireContext()).load(viewModel.uiState.value.course.cover)
+                    .placeholder(R.drawable.search_background).error(R.drawable.ic_search)
+                    .into(imageView)
                 // Установить имя перехода
                 ViewCompat.setTransitionName(imageView, "courseImageTransition")
             }
@@ -143,6 +139,7 @@ class CourseInfoFragment : Fragment() {
                     if (url[url.length - 2] == 'v') { //svg
                         requestBuilder.load(viewModel.uiState.value.course.author.photo)
                             .apply(RequestOptions.bitmapTransform(CircleCrop()))
+                            .error(R.drawable.ic_search)
                             .into(binding.authorImg)
                     } else { //other img format
                         Glide.with(requireContext())
@@ -158,8 +155,15 @@ class CourseInfoFragment : Fragment() {
                 binding.isFavBtn.isChecked = it.course.isFavorite
 
                 sharedViewModel.selectCourse(it.course)
+
+
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sharedViewModel.selectCourse(viewModel.uiState.value.course)
     }
 
 }

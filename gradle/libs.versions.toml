@@ -56,6 +56,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref="kotlin" }
 navigation-args = { id ="androidx.navigation.safeargs", version.ref="navArgs" }
 
+
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 

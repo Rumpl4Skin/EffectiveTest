@@ -7,7 +7,9 @@ import com.example.effetivetest.domain.model.CourseResponse
 interface CourseRepository {
     suspend fun getCoursesByPage(page: Int):CourseResponse
 
-    suspend fun updateCourse(course: Course)
-
     suspend fun getAuthor(id:Long): Author
+
+    suspend fun insertOrUpdateCourseDB(course: Course)
+
+    suspend fun getCourseByIdDB(id: Long): Course?
 }

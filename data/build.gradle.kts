@@ -50,14 +50,17 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
-
     //DI
     implementation("com.google.dagger:hilt-android:2.52")
-  //  kapt ("com.google.dagger:hilt-compiler:2.52")
     implementation("com.google.dagger:dagger-compiler:2.52")
-
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //room
+    // To use Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:2.6.1")
+    //  Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:2.6.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

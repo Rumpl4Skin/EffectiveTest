@@ -1,4 +1,5 @@
-import androidx.lifecycle.MutableLiveData
+package com.example.effectivetest.presentation.screens
+
 import androidx.lifecycle.ViewModel
 import com.example.effetivetest.domain.model.Course
 import kotlinx.coroutines.flow.MutableStateFlow

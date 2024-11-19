@@ -13,4 +13,5 @@ plugins {
     alias(libs.plugins.kotlinx.serialization) apply false
     alias(libs.plugins.navigation.args) version libs.versions.navArgs apply false
 
+
 }

@@ -1,4 +1,4 @@
-package com.example.effectivetest.data.remove.service
+package com.example.effectivetest.data.sources.remove
 
 import com.example.effectivetest.data.model.remove.NetworkCourseResponse
 import retrofit2.http.GET
