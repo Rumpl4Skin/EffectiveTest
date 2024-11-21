@@ -17,9 +17,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right">
-           <!-- <argument
-                android:name="course"
-                app:argType="com.example.effetivetest.domain.model.Course" /> -->
+            <argument
+                android:name="id"
+                app:argType="long" />
         </action>
     </fragment>
     <fragment
@@ -32,16 +32,13 @@
         android:name="com.example.effectivetest.presentation.screens.courseInfoScreen.CourseInfoFragment"
         android:label="fragment_course_info"
         tools:layout="@layout/fragment_course_info">
-        <!-- <argument
-             android:name="course"
-             app:argType="com.example.effetivetest.domain.model.Course" />
         <argument
-            android:name="course"
-            app:argType="string" />-->
+            android:name="id"
+            app:argType="long" />
     </fragment>
-     <fragment
-         android:id="@+id/accountFragment"
-         android:name="com.example.effectivetest.presentation.screens.accountScreen.AccountFragment"
-         android:label="fragment_account"
-         tools:layout="@layout/fragment_account" />
- </navigation>
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.example.effectivetest.presentation.screens.accountScreen.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
+</navigation>

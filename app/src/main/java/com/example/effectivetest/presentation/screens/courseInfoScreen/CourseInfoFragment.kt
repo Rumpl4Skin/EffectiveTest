@@ -1,10 +1,9 @@
 package com.example.effectivetest.presentation.screens.courseInfoScreen
 
-import com.example.effectivetest.presentation.screens.SharedViewModel
-
 import android.content.Intent
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
@@ -12,12 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresExtension
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
@@ -25,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.effectivetest.presentation.glide.SvgSoftwareLayerSetter
 import com.example.effectivetest.R
 import com.example.effectivetest.databinding.FragmentCourseInfoBinding
+import com.example.effectivetest.presentation.screens.mainScreen.MainFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -32,32 +34,32 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class CourseInfoFragment : Fragment() {
 
+    private val args: CourseInfoFragmentArgs by navArgs()
     private var _binding: FragmentCourseInfoBinding? = null
     private val binding get() = _binding!!
-    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val viewModel: CourseInfoFragmentViewModel by viewModels()
     private lateinit var requestBuilder: RequestBuilder<PictureDrawable>
 
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
         _binding = FragmentCourseInfoBinding.inflate(inflater, container, false)
+        viewModel.setCourse(courseId = args.id) //получение id выбранного course из предыдущего экрана
 
-        //получение выбранного course из предыдущего экрана
+        //svg support
+        requestBuilder =
+            Glide.with(requireContext())
+                .`as`(PictureDrawable::class.java)
+                .placeholder(R.drawable.search_background)
+                .error(R.drawable.ic_search)
+                .listener(SvgSoftwareLayerSetter())
+
         lifecycleScope.launch {
-            sharedViewModel.selectedCourse.collect { course ->
-                viewModel.setCourse(course = course)
-
-                //svg support
-                requestBuilder =
-                    Glide.with(requireContext())
-                        .`as`(PictureDrawable::class.java)
-                        .placeholder(R.drawable.search_background)
-                        .error(R.drawable.ic_search)
-                        .listener(SvgSoftwareLayerSetter())
+            viewModel.uiState.collect {
 
                 binding.lastUpdTxt.text = viewModel.uiState.value.course.updateDate
                 binding.courseNameTxt.text =
@@ -75,18 +77,11 @@ class CourseInfoFragment : Fragment() {
                         )
                     }
 
-
                 binding.courseDescriptionTxt.text = Html.fromHtml(
                     viewModel.uiState.value.course.description,
                     Html.FROM_HTML_MODE_COMPACT
                 )?.ifEmpty { context?.getString(R.string.absent) }
-                /*binding.isFavBtn.background =
-                context?.let {
-                    AppCompatResources.getDrawable(
-                        it,
-                        if (viewModel.uiState.value.course.isFavorite) R.drawable.ic_is_fav_sel else R.drawable.ic_favorite
-                    )
-                }*/
+
                 binding.isFavBtn.isChecked = viewModel.uiState.value.course.isFavorite
 
 
@@ -95,7 +90,7 @@ class CourseInfoFragment : Fragment() {
                 }
 
                 binding.goBackBtn.setOnClickListener {
-                    sharedViewModel.selectCourse(viewModel.uiState.value.course)
+
                     findNavController().popBackStack()
 
                 }
@@ -117,6 +112,7 @@ class CourseInfoFragment : Fragment() {
                     } else Toast.makeText(context, getString(R.string.absent), Toast.LENGTH_SHORT)
                         .show()
                 }
+
                 val imageView: ImageView = binding.courseImg
 
                 Glide.with(requireContext()).load(viewModel.uiState.value.course.cover)
@@ -124,16 +120,7 @@ class CourseInfoFragment : Fragment() {
                     .into(imageView)
                 // Установить имя перехода
                 ViewCompat.setTransitionName(imageView, "courseImageTransition")
-            }
-        }
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        lifecycleScope.launch {
-            viewModel.uiState.collect {
                 val url = viewModel.uiState.value.course.author.photo
                 if (it.course.author.id.toInt() != 0 && url.isNotEmpty()) {
                     if (url[url.length - 2] == 'v') { //svg
@@ -154,16 +141,15 @@ class CourseInfoFragment : Fragment() {
                 binding.courseAuthorTxt.text = it.course.author.fullName
                 binding.isFavBtn.isChecked = it.course.isFavorite
 
-                sharedViewModel.selectCourse(it.course)
-
-
             }
         }
+        return binding.root
     }
 
-    override fun onPause() {
-        super.onPause()
-        sharedViewModel.selectCourse(viewModel.uiState.value.course)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
     }
+
 
 }

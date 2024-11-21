@@ -1,6 +1,5 @@
 package com.example.effectivetest.presentation.screens.mainScreen
 
-import com.example.effectivetest.presentation.screens.SharedViewModel
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -44,7 +43,6 @@ class MainFragment : Fragment(), CourseItemClickListener {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainFragmentViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var filterPanel: LinearLayout
     private lateinit var courseAdapter: CourseAdapter
@@ -136,12 +134,6 @@ class MainFragment : Fragment(), CourseItemClickListener {
                     }
             }
         }
-        lifecycleScope.launch()
-        {
-            sharedViewModel.selectedCourse.collect { course ->
-                viewModel.updCourse(course = course)
-            }
-        }
 
         binding.recyclerView.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
@@ -165,9 +157,11 @@ class MainFragment : Fragment(), CourseItemClickListener {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
-        viewModel.checkFavStatus(sharedViewModel.selectedCourse.value.id)
+        viewModel.checkFavStatus()
+        courseAdapter.notifyItemChanged(viewModel.uiState.value.lastIdCourseDetail.toInt())
         courseAdapter.clearItems()
         courseAdapter.addItems(
             viewModel.uiState.value.courses,
@@ -223,11 +217,11 @@ class MainFragment : Fragment(), CourseItemClickListener {
     }
 
     override fun onCourseDetailItemClicked(course: Course, image: ImageView) {
-        //s//haredViewModel.selectCourse(course = course)
-       // удалить sharedViewModel, передавать только id (в две стороны) и смотреть по базе
         // Установить имя перехода
         ViewCompat.setTransitionName(image, "courseImage")
-        val action = MainFragmentDirections.actionCoursesFragmentToCourseDetailFragment()
+
+        //передача id выбранного курса
+        val action = MainFragmentDirections.actionCoursesFragmentToCourseDetailFragment(course.id)
         val extras = FragmentNavigatorExtras(image to "courseImage")
         findNavController().navigate(
             action,

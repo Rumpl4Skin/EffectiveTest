@@ -1,7 +1,6 @@
 package com.example.effectivetest.presentation.screens.mainScreen
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.effectivetest.data.model.CategoryFilter
@@ -114,16 +113,18 @@ class MainFragmentViewModel @Inject constructor(
     }
 
     fun setCourseFav(course: Course) {
+        viewModelScope.launch {
         val newList =
             _uiState.value.courses.map { if (it == course) it.copy(isFavorite = !it.isFavorite) else it }
 
-        viewModelScope.launch {
+
             insertOrUpdateCourseDbUseCase.execute(course)
-        }
+
         _uiState.update {
             _uiState.value.copy(
                 courses = newList
             )
+        }
         }
     }
 
@@ -151,16 +152,19 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-    fun checkFavStatus(courseId: Long) {
-        viewModelScope.launch {
-            val updatedCourse = getCourseByIdDbUseCase.execute(id = courseId)
-            _uiState.update {
-                it.copy(courses = _uiState.value.courses.map { course ->
-                    if (course.id == courseId) updatedCourse ?: course else course
-                })
+    fun checkFavStatus() {
+        if (_uiState.value.courses.isNotEmpty()) {
+            viewModelScope.launch {
+                val updatedCourse =
+                    getCourseByIdDbUseCase.execute(courseId = _uiState.value.lastIdCourseDetail)
+                _uiState.update {
+                    it.copy(courses = _uiState.value.courses.map { course ->
+                        if (course.id == _uiState.value.lastIdCourseDetail) updatedCourse
+                            ?: course else course
+                    })
+                }
             }
         }
-
     }
 
     object UI {
@@ -173,7 +177,8 @@ class MainFragmentViewModel @Inject constructor(
             val newCourses: List<Course> = emptyList(),
             val newItemLoad: Int = 0,
             val dataSource: DataSource = DataSource.INTERNET,
-            val internetConnectionEnabled: Boolean = true
+            val internetConnectionEnabled: Boolean = true,
+            val lastIdCourseDetail: Long = 0,
         )
     }
 }

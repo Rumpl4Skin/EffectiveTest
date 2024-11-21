@@ -1,5 +1,6 @@
 package com.example.effectivetest.data.repository
 
+import com.example.effetivetest.domain.Constants
 import com.example.effectivetest.data.model.room.CourseEntity
 import com.example.effectivetest.data.model.remove.NetworkAuthor
 import com.example.effetivetest.domain.model.CourseResponse
@@ -16,7 +17,6 @@ import com.example.effetivetest.domain.model.Author
 import com.example.effetivetest.domain.model.Course
 import com.example.effetivetest.domain.model.Meta
 import com.example.effetivetest.domain.repository.CourseRepository
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class CourseRepositoryImpl @Inject constructor(
@@ -48,7 +48,7 @@ class CourseRepositoryImpl @Inject constructor(
 
     override suspend fun getCourseByIdDB(id: Long): Course? {
         val course = courseDao.getCourseById(id)
-        return authorDao.getAuthorById(course?.authorId ?: 0)?.toDomain()
+        return authorDao.getAuthorById(course?.authorId ?: Constants.TEST_AUTHOR)?.toDomain()
             ?.let { course?.toDomain(it) }
     }
 
@@ -64,7 +64,7 @@ class CourseRepositoryImpl @Inject constructor(
             rating = this.calculateRating().roundToDecimalPlaces(1),
             author = if (this.authors?.isNotEmpty() == true) this.authors.map { idAuth -> Author(id = idAuth) }
                 .first()
-            else Author(id = 0),
+            else Author(id = Constants.TEST_AUTHOR),
             actualLink = this.canonicalUrl ?: "",
             isActive = this.isActive
         )

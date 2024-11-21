@@ -73,7 +73,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     //kapt("com.github.bumptech.glide:compiler:4.16.0")
     ksp ("com.github.bumptech.glide:ksp:4.16.0")
-    implementation( "com.caverock:androidsvg:1.2.1")
+    implementation("com.caverock:androidsvg:1.4")
 
     //pagination
     implementation("androidx.paging:paging-runtime:3.3.4")

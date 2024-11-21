@@ -1,6 +1,7 @@
 package com.example.effectivetest.data.di
 
-import com.example.effectivetest.data.Constants
+import android.util.Log
+import com.example.effetivetest.domain.Constants
 import com.example.effectivetest.data.sources.remove.AuthorRemoteService
 import com.example.effectivetest.data.repository.CourseRepositoryImpl
 import com.example.effectivetest.data.sources.remove.CourseRemoteService
@@ -14,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,7 +34,17 @@ class NetworkModule {
             level =
                 HttpLoggingInterceptor.Level.BODY // Вы можете использовать также BASIC, HEADERS, или NONE
         }
-        return OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
+        val errorInterceptor = Interceptor { chain: Interceptor.Chain ->
+            val response = chain.proceed(chain.request())
+            if (!response.isSuccessful) {
+                when (response.code) {
+                    404 -> Log.e("TAG","404")
+                    else -> Log.e("TAG","network")
+                }
+            }
+            return@Interceptor response
+        }
+        return OkHttpClient.Builder().addInterceptor(loggingInterceptor).addInterceptor(errorInterceptor).build()
     }
 
     @Provides

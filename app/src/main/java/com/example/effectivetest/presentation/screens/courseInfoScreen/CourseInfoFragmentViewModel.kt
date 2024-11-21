@@ -1,5 +1,9 @@
 package com.example.effectivetest.presentation.screens.courseInfoScreen
 
+import android.net.http.HttpException
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.effetivetest.domain.model.Course
@@ -16,47 +20,59 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseInfoFragmentViewModel @Inject constructor(
-   // private val getCourseAuthorInfoUseCase: GetCourseAuthorInfoUseCase,
     private val updateCourseDbUseCase: InsertOrUpdateCourseDbUseCase,
     private val getCourseByIdDbUseCase: GetCourseByIdDbUseCase,
+    private val getCourseAuthorInfoUseCase: GetCourseAuthorInfoUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(UI.UiState())
     val uiState: StateFlow<UI.UiState> = _uiState.asStateFlow()
 
-    fun setCourse(course: Course) {
-        if (course.author.photo.isEmpty()) {
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    fun setCourse(courseId: Long) {
+        try {
             viewModelScope.launch {
-                val courseDb = getCourseByIdDbUseCase.execute(course.author.id)
-                if (courseDb != null && courseDb.author.photo.isNotEmpty()) {
-                    _uiState.update {
-                        it.copy(course = courseDb)
+
+                if (courseId.toInt() != 0) {
+                    var course = Course()
+
+                    course = getCourseByIdDbUseCase.execute(courseId = courseId) ?: Course()
+
+
+                    if (course.author.photo.isEmpty()) {
+                        viewModelScope.launch {
+                            getAuthorInfo(authorId = course.author.id)
+                        }
+
+                    } else {
+                        _uiState.update {
+                            it.copy(course = course)
+                        }
                     }
-                } else {
-                    getAuthorInfo(authorId = course.author.id)
                 }
             }
-
-        } else {
-            _uiState.update {
-                it.copy(course = course)
-            }
+        } catch (e: Exception) {
+            e.localizedMessage?.let { Log.e("TAG", it) }
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     private fun getAuthorInfo(authorId: Long) {
-        /*viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    course = _uiState.value.course.copy(
-                        author = getCourseAuthorInfoUseCase.execute(
-                            id = authorId
+        try {
+            viewModelScope.launch {
+                _uiState.update {
+                    it.copy(
+                        course = _uiState.value.course.copy(
+                            author = getCourseAuthorInfoUseCase.execute(
+                                authorId = authorId
+                            )
                         )
                     )
-                )
+                }
+                updateCourseDbUseCase.execute(_uiState.value.course)
             }
-            updateCourseDbUseCase.execute(_uiState.value.course)
+        } catch (e: HttpException) {
+            e.localizedMessage?.let { Log.e("TAG", it) }
         }
-*/
     }
 
     fun updateCourseFav() {
